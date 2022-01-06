@@ -1,15 +1,20 @@
-import React,{useState,useEffect} from "react";
-import { Table,Button } from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Table } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { setSingleOrders } from "../../../../../action/index.action";
 import useFirebase from "../../../../../hooks/useFirebase";
 const OrderList = () => {
-  const [user, setUser] = useState([]);
-  const {users} = useFirebase()
+  const { users } = useFirebase();
+  const dispatch = useDispatch();
+  const allorders = useSelector((state) => state.allOrders);
   useEffect(() => {
-    fetch(`https://limitless-dusk-46203.herokuapp.com/order?email=${users.email}`)
-    .then(res=>res.json())
-    .then(data=>setUser(data))
-  },[user.email]);
-  
+    fetch(
+      `https://react-redux-management.herokuapp.com/orders?email=${users.email}`
+    )
+      .then((res) => res.json())
+      .then((data) => dispatch(setSingleOrders(data)));
+  }, [allorders]);
+
   return (
     <div>
       <Table className="text-center" striped bordered hover>
@@ -19,16 +24,19 @@ const OrderList = () => {
             <th>Name</th>
             <th>Email</th>
             <th>Price</th>
-            {/* <th>Action</th> */}
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {user.map((user, index) => (
+          {allorders.map((user, index) => (
             <tr key={user._id}>
               <td>{index + 1}</td>
               <td>{user.title}</td>
               <td>{user.email}</td>
               <td>${user.payment}</td>
+              <td>
+                <button disable>Paid</button>
+              </td>
               {/* <td>
                 <Button variant="danger" onClick={() => handelClick(user._id)}>
                   Delete

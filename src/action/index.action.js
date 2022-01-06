@@ -17,6 +17,12 @@ export const setAllOrders = (data) => {
      data: data,
    };
 }
+export const setSingleOrders = (data) => {
+   return {
+     type: "SINGLEORDER",
+     data: data,
+   };
+}
 
 export const setServices = (data) => {
    return {

@@ -82,7 +82,7 @@ const useFirebase = () => {
   // save database
   const saveData = (email, displayName, role) => {
     const user = { email, displayName, role };
-    fetch("https://limitless-dusk-46203.herokuapp.com/user", {
+    fetch("https://react-redux-management.herokuapp.com/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

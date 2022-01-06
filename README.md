@@ -1,3 +1,5 @@
 # Redux Event Management
 
-[Live Website](https://event-management-143eb.web.app).
+[Live Website](https://redux-event-management.web.app).
+
+[Api](https://react-redux-management.herokuapp.com)

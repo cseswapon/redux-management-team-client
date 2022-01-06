@@ -1,90 +1,94 @@
 import React, { useEffect, useState } from "react";
 import {
-   PaymentElement,
-   useStripe,
-   useElements,
+  PaymentElement,
+  useStripe,
+  useElements,
 } from "@stripe/react-stripe-js";
 
 const CheckoutForm = ({ orderData, clientSecret }) => {
-   const stripe = useStripe();
-   const elements = useElements();
+  const stripe = useStripe();
+  const elements = useElements();
 
-   const [message, setMessage] = useState(null);
-   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-   useEffect(() => {
-      if (!stripe) {
-         return;
+  useEffect(() => {
+    if (!stripe) {
+      return;
+    }
+
+    if (!clientSecret) {
+      return;
+    }
+
+    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+      switch (paymentIntent.status) {
+        case "succeeded":
+          setMessage("Payment succeeded!");
+          break;
+        case "processing":
+          setMessage("Your payment is processing.");
+          break;
+        case "requires_payment_method":
+          setMessage("Your payment was not successful, please try again.");
+          break;
+        default:
+          setMessage("Something went wrong.");
+          break;
       }
+    });
+  }, [stripe]);
 
-      if (!clientSecret) {
-         return;
-      }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-         switch (paymentIntent.status) {
-            case "succeeded":
-               setMessage("Payment succeeded!");
-               break;
-            case "processing":
-               setMessage("Your payment is processing.");
-               break;
-            case "requires_payment_method":
-               setMessage("Your payment was not successful, please try again.");
-               break;
-            default:
-               setMessage("Something went wrong.");
-               break;
-         }
-      });
-   }, [stripe]);
+    if (!stripe || !elements) {
+      return;
+    }
 
-   const handleSubmit = async (e) => {
-      e.preventDefault();
+    setIsLoading(true);
 
-      if (!stripe || !elements) {
-         return;
-      }
-
-      setIsLoading(true);
-
-      const { error } = await stripe.confirmPayment({
-         elements,
-         confirmParams: {
-            // Make sure to change this to your payment completion page
-            return_url: "/dashBoard/myorder",
-         },
+    const { error } = await stripe.confirmPayment(
+      {
+        elements,
+        confirmParams: {
+          // Make sure to change this to your payment completion page
+          return_url: "https://redux-event-management.web.app",
+        },
       },
-      fetch(`https://limitless-dusk-46203.herokuapp.com/order`, {
-            method: "POST",
-            headers: {
-               "content-type": "application/json"
-            },
-            body: JSON.stringify(orderData)
-         })
-         .then(res => res.json())
-         .then(data => console.log(data))
-      );
-      
-      console.log(error);
-      if (error.type === "card_error" || error.type === "validation_error") {
-         setMessage(error.message);
-      } else {
-         
-      }
-      setIsLoading(false);
-   };
-   return (
-      <form className='mx-auto form' id="payment-form" onSubmit={handleSubmit}>
-         <PaymentElement id="payment-element" />
-         <button className='button' disabled={isLoading || !stripe || !elements} type="submit">
-            <span id="button-text">
-               {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-            </span>
-         </button>
-         {/* Show any error or success messages */}
-         {message && <div id="payment-message">{message}</div>}
-      </form>
-   );
-}
+      fetch(`https://react-redux-management.herokuapp.com/order`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      })
+        .then((res) => res.json())
+        .then((data) => console.log(data))
+    );
+
+    console.log(error);
+    if (error.type === "card_error" || error.type === "validation_error") {
+      setMessage(error.message);
+    } else {
+    }
+    setIsLoading(false);
+  };
+  return (
+    <form className="mx-auto form" id="payment-form" onSubmit={handleSubmit}>
+      <PaymentElement id="payment-element" />
+      <button
+        className="button"
+        disabled={isLoading || !stripe || !elements}
+        type="submit"
+      >
+        <span id="button-text">
+          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+        </span>
+      </button>
+      {/* Show any error or success messages */}
+      {message && <div id="payment-message">{message}</div>}
+    </form>
+  );
+};
 export default CheckoutForm;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import './AddService.css';
+import "./AddService.css";
 const AddService = () => {
   const {
     register,
@@ -9,7 +9,7 @@ const AddService = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
-    fetch("https://limitless-dusk-46203.herokuapp.com/service", {
+    fetch("https://react-redux-management.herokuapp.com/service", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

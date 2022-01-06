@@ -7,14 +7,14 @@ const ManageService = () => {
   const dispatch = useDispatch();
   const order = useSelector((state) => state.order);
   useEffect(() => {
-    fetch("https://limitless-dusk-46203.herokuapp.com/service")
+    fetch("https://react-redux-management.herokuapp.com/service")
       .then((res) => res.json())
       .then((data) => dispatch(setOrders(data)));
   }, [order]);
   const handleDelete = (id) => {
     const confirmation = window.confirm("Are you sure for delete this user??");
     if (confirmation) {
-      fetch(`https://limitless-dusk-46203.herokuapp.com/service/${id}`, {
+      fetch(`https://react-redux-management.herokuapp.com/service/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
