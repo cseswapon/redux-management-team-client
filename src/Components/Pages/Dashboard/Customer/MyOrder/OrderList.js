@@ -8,12 +8,14 @@ const OrderList = () => {
   const dispatch = useDispatch();
   const allorders = useSelector((state) => state.allOrders);
   useEffect(() => {
-    fetch(
-      `https://react-redux-management.herokuapp.com/orders?email=${users.email}`
-    )
+    fetch(`http://localhost:5000/orders?email=${users.email}`, {
+      headers: {
+        authorization: `Barer ${localStorage.getItem("id_token")}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => dispatch(setSingleOrders(data)));
-  }, [allorders]);
+  }, [dispatch, users.email]);
 
   return (
     <div>
@@ -35,7 +37,7 @@ const OrderList = () => {
               <td>{user.email}</td>
               <td>${user.payment}</td>
               <td>
-                <button disable>Paid</button>
+                <button disabled>Paid</button>
               </td>
               {/* <td>
                 <Button variant="danger" onClick={() => handelClick(user._id)}>
